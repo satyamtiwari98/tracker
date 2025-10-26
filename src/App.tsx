@@ -26,6 +26,10 @@ function App() {
     setData((prevData) => [...prevData, newTransaction]);
   };
 
+  const handleDeleteTransaction = (index: number) => {
+    setData((prevData) => prevData.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4 bg-gray-100">
       <div>
@@ -54,7 +58,7 @@ function App() {
       {data.length > 0 && (
         <div className="mb-6">
           <div className="p-4 bg-white shadow-md rounded-md w-full max-w-4xl">
-            <Table data={data} />
+            <Table data={data} onDelete={handleDeleteTransaction} />
           </div>
         </div>
       )}

@@ -8,10 +8,33 @@ interface Transaction {
 
 interface TableProps {
   data: Transaction[];
+  onDelete: (index: number) => void; // function to handle delete
 }
 
-const Table: React.FC<TableProps> = ({ data }) => {
-  const columns = ["Date", "Description", "Category", "Amount", "Balance"];
+const Table: React.FC<TableProps> = ({ data, onDelete }) => {
+  const columns = [
+    "Date",
+    "Description",
+    "Category",
+    "Amount",
+    "Balance",
+    "Actions",
+  ];
+
+  const handleDelete = async (index: number) => {
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/transactions/${index}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        onDelete(index); // update frontend state
+      } else {
+        console.error("Failed to delete transaction");
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    }
+  };
 
   //   let runningBalance: number = 0;
 
@@ -43,6 +66,14 @@ const Table: React.FC<TableProps> = ({ data }) => {
               <td className="p-4">{row.category}</td>
               <td className="p-4">{row.amount}</td>
               <td className="p-4">{row.balance}</td>
+              <td className="p-4">
+                <button
+                  className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                  onClick={() => handleDelete(index)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

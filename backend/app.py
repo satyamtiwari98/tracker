@@ -46,5 +46,21 @@ def add_transaction():
     return jsonify(new_transaction), 201
 
 
+@app.route("/transactions/<int:index>", methods=["DELETE"])
+def delete_transaction(index):
+    data = read_data()
+    if 0 <= index < len(data):
+        data.pop(index)
+        # Recalculate balances
+        for i in range(len(data)):
+            if i == 0:
+                data[i]["balance"] = data[i]["amount"]
+            else:
+                data[i]["balance"] = data[i-1]["balance"] + data[i]["amount"]
+        write_data(data)
+        return jsonify({"message": "Deleted successfully"}), 200
+    return jsonify({"error": "Transaction not found"}), 404
+
+
 if __name__ == "__main__":
     app.run(debug=True)
